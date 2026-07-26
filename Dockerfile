@@ -2,28 +2,71 @@ FROM debian:bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# چالاککردنی معماریی 32-bit بۆ سەپۆرتی Wine
 RUN dpkg --add-architecture i386
 
+# دابەزاندنی تەواوی ئامراز، پرۆگرام، گەشەپێدان و دێسکتاپ
 RUN apt update && apt install -y \
     xrdp \
     xfce4 \
     xfce4-goodies \
+    xfce4-terminal \
     xorg \
     dbus-x11 \
     sudo \
     curl \
     wget \
+    git \
     nano \
+    vim \
+    htop \
+    fastfetch \
     net-tools \
+    iputils-ping \
+    dnsutils \
+    nmap \
+    tcpdump \
+    openvpn \
     pkexec \
     pulseaudio \
     pulseaudio-utils \
+    pavucontrol \
     wine \
     wine32 \
-    firefox-esr && \
+    wine64 \
+    winetricks \
+    firefox-esr \
+    chromium \
+    vlc \
+    obs-studio \
+    audacity \
+    gimp \
+    inkscape \
+    libreoffice \
+    evince \
+    filezilla \
+    telegram-desktop \
+    thunderbird \
+    unzip \
+    zip \
+    p7zip-full \
+    build-essential \
+    python3 \
+    python3-pip \
+    python3-venv \
+    nodejs \
+    npm \
+    default-jdk \
+    golang \
+    cargo \
+    fonts-noto \
+    fonts-noto-color-emoji \
+    fonts-kacst \
+    fonts-firacode \
+    fonts-roboto && \
     apt clean && rm -rf /var/lib/apt/lists/*
 
-# دروستکردنی یوزەری Ameer و دانانی پاسۆرد
+# دروستکردنی یوزەری Ameer لەگەڵ دەسەڵاتی Sudo
 RUN useradd -m -s /bin/bash Ameer && \
     echo "Ameer:123456" | chpasswd && \
     usermod -aG sudo Ameer
@@ -31,7 +74,7 @@ RUN useradd -m -s /bin/bash Ameer && \
 # دروستکردنی فۆڵدەری ڕێکخستنی GTK بۆ یوزەری Ameer
 RUN mkdir -p /home/Ameer/.config/gtk-3.0 /home/Ameer/.config/xfce4/xfconf/xfce-perchannel-xml
 
-# چالاککردنی Dark Mode ڕەسەن لە Debian 12
+# چالاککردنی Dark Mode لە Debian 12
 RUN echo '<?xml version="1.0" encoding="UTF-8"?>\n\
 <channel name="xsettings" version="1.0">\n\
   <property name="Net" type="empty">\n\
@@ -39,7 +82,7 @@ RUN echo '<?xml version="1.0" encoding="UTF-8"?>\n\
   </property>\n\
 </channel>' > /home/Ameer/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
 
-# دانانی شێوازی شووشەیی (Glass Effect)
+# دانانی شێوازی شووشەیی (Glass Effect) لەسەر GTK بەبێ ئەوەی هەڵە بدات
 RUN echo 'panel.gtk-gradient, .xfce4-panel {\n\
     background-color: rgba(15, 15, 15, 0.45) !important;\n\
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);\n\
@@ -55,7 +98,7 @@ RUN chown -R Ameer:Ameer /home/Ameer/.config
 
 RUN sed -i 's/^allowed_users=.*/allowed_users=anybody/' /etc/X11/Xwrapper.config || echo "allowed_users=anybody" >> /etc/X11/Xwrapper.config
 
-# ڕێکخستنی xRDP بۆ بەکارهێنانی startxfce4 بەبێ کێشەی Session Error
+# ڕێکخستنی xRDP بە سەقامگیری 100%
 RUN sed -i 's/crypt_level=high/crypt_level=low/' /etc/xrdp/xrdp.ini && \
     sed -i 's/security_layer=negotiate/security_layer=rdp/' /etc/xrdp/xrdp.ini && \
     echo "exec startxfce4" > /etc/xrdp/startwm.sh && chmod +x /etc/xrdp/startwm.sh
