@@ -1,14 +1,15 @@
 #!/bin/bash
 
-# Start DBus service
-service dbus start
-
-# Prepare X11 socket folder
+# پاککردنەوە و ئامادەکردنی X11
 mkdir -p /tmp/.X11-unix
 chmod 1777 /tmp/.X11-unix
+rm -rf /tmp/.X*-lock /tmp/.X11-unix/X*
 
-# Start PipeWire PulseAudio service in background
-pipewire-pulse &
+# دەستپێکردنی ڕاژەکان
+service dbus start
+service xrdp start
+service xrdp-sesman start
 
-# Keep container running continuously
-exec tail -f /dev/null
+# هێشتنەوەی کانتێنەرەکە بە بەردەوامی
+touch /var/log/xrdp-sesman.log /var/log/xrdp.log
+tail -f /var/log/xrdp*.log
