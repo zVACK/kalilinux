@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# دروستکردنی فۆڵدەری X11 پێش دەستپێکردنی xrdp بۆ ڕێگری لە کێشەی Connection Log
+# دروستکردنی فۆڵدەری X11 پیش دەستپێکردن تا بە هیچ شێوەیەک Session Error نەنوسرێت
 mkdir -p /tmp/.X11-unix
 chmod 1777 /tmp/.X11-unix
 rm -rf /tmp/.X*-lock /tmp/.X11-unix/X*
