@@ -2,10 +2,12 @@ FROM debian:bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# چالاککردنی معماریی 32-bit بۆ سەپۆرتی Wine
-RUN dpkg --add-architecture i386
+# چالاککردنی معماریی 32-bit و زیاکردنی contrib/non-free بۆ دابەزاندنی winetricks
+RUN dpkg --add-architecture i386 && \
+    sed -i 's/main/main contrib non-free/g' /etc/apt/sources.list.d/debian.sources || \
+    sed -i 's/main/main contrib non-free/g' /etc/apt/sources.list
 
-# دابەزاندنی تەواوی ئامراز، پرۆگرام، گەشەپێدان و دێسکتاپ
+# دابەزاندنی تەواوی ئامرازەکان بەبێ هەڵەی apt
 RUN apt update && apt install -y \
     xrdp \
     xfce4 \
@@ -20,7 +22,7 @@ RUN apt update && apt install -y \
     nano \
     vim \
     htop \
-    fastfetch \
+    neofetch \
     net-tools \
     iputils-ping \
     dnsutils \
@@ -74,7 +76,7 @@ RUN useradd -m -s /bin/bash Ameer && \
 # دروستکردنی فۆڵدەری ڕێکخستنی GTK بۆ یوزەری Ameer
 RUN mkdir -p /home/Ameer/.config/gtk-3.0 /home/Ameer/.config/xfce4/xfconf/xfce-perchannel-xml
 
-# چالاککردنی Dark Mode لە Debian 12
+# چالاککردنی Dark Mode ڕەسەن لە Debian 12
 RUN echo '<?xml version="1.0" encoding="UTF-8"?>\n\
 <channel name="xsettings" version="1.0">\n\
   <property name="Net" type="empty">\n\
@@ -82,7 +84,7 @@ RUN echo '<?xml version="1.0" encoding="UTF-8"?>\n\
   </property>\n\
 </channel>' > /home/Ameer/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
 
-# دانانی شێوازی شووشەیی (Glass Effect) لەسەر GTK بەبێ ئەوەی هەڵە بدات
+# دانانی شێوازی شووشەیی (Glass Effect) لەسەر GTK
 RUN echo 'panel.gtk-gradient, .xfce4-panel {\n\
     background-color: rgba(15, 15, 15, 0.45) !important;\n\
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);\n\
