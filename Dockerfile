@@ -1,44 +1,36 @@
-FROM debian:bookworm-slim
+FROM debian:bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# چالاککردنی پشتگیری 32-bit بۆ بەرنامەکانی Wine
 RUN dpkg --add-architecture i386
 
-# دابەزاندنی پاکێجە سەرەکییەکان بە شێوەیەکی سووک
-RUN apt update && apt install -y --no-install-recommends \
+RUN apt update && apt install -y \
     xrdp \
     xfce4 \
-    xfce4-terminal \
+    xfce4-goodies \
     xorg \
     dbus-x11 \
     sudo \
     curl \
     wget \
-    git \
     nano \
     net-tools \
+    pkexec \
     pulseaudio \
     pulseaudio-utils \
     wine \
-    wine32:i386 \
-    wine64 \
-    firefox-esr \
-    ca-certificates && \
+    wine32 \
+    firefox-esr && \
     apt clean && rm -rf /var/lib/apt/lists/*
 
-# دروستکردنی یوزەری Ameer لەگەڵ وشەی نهێنی 1234 و بەخشینی مۆڵەتی sudo
-RUN useradd -m -s /bin/bash Ameer && \
-    echo "Ameer:1234" | chpasswd && \
-    usermod -aG sudo Ameer
-
-# دیاریکردنی سێشنی XFCE بۆ یوزەری Ameer
-RUN echo "startxfce4" > /home/Ameer/.xsession && chmod 700 /home/Ameer/.xsession
-RUN chown -R Ameer:Ameer /home/Ameer
+# Set root password
+RUN echo "root:root" | chpasswd
 
 RUN sed -i 's/^allowed_users=.*/allowed_users=anybody/' /etc/X11/Xwrapper.config || echo "allowed_users=anybody" >> /etc/X11/Xwrapper.config
 
-# دروستکردنی machine-id بۆ DBus
+RUN echo "startxfce4" > /root/.xsession && chmod 700 /root/.xsession
+
+# Generate machine-id for dbus
 RUN mkdir -p /var/run/dbus && dbus-uuidgen > /var/lib/dbus/machine-id
 
 RUN sed -i 's/crypt_level=high/crypt_level=low/' /etc/xrdp/xrdp.ini && \
