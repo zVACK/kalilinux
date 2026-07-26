@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # چالاککردنی پشتگیری 32-bit بۆ بەرنامەکانی Wine
 RUN dpkg --add-architecture i386
 
-# دابەزاندنی XFCE، XRDP، Wine و ئامرازەکانی Kali (بەبێ full-upgrade بۆ ڕێگری لە کێشە)
+# دابەزاندنی XFCE، XRDP، Wine و پاکێجە سەرەکییەکان
 RUN apt update && apt install -y --no-install-recommends \
     xrdp \
     xfce4 \
@@ -18,18 +18,20 @@ RUN apt update && apt install -y --no-install-recommends \
     git \
     nano \
     net-tools \
-    policykit-1 \
     pulseaudio \
     pulseaudio-utils \
     wine \
-    wine32 \
+    wine32:i386 \
     wine64 \
-    winetricks \
     firefox-esr \
     kali-desktop-xfce \
     kali-themes \
     kali-defaults && \
     apt clean && rm -rf /var/lib/apt/lists/*
+
+# دابەزاندنی winetricks ڕاستەوخۆ لە سەرچاوەی فەرمییەوە بۆ ڕێگری لە کێشەی apt
+RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
+    -O /usr/local/bin/winetricks && chmod +x /usr/local/bin/winetricks
 
 # دروستکردنی یوزەری Ameer لەگەڵ وشەی نهێنی 1234 و بەخشینی مۆڵەتی sudo
 RUN useradd -m -s /bin/bash Ameer && \
