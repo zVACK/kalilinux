@@ -1,4 +1,4 @@
-FROM debian:bookworm
+FROM debian:trixie
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -15,8 +15,9 @@ RUN apt update && apt install -y \
     wget \
     nano \
     net-tools \
+    polkitd \
     pkexec \
-    pulseaudio \
+    pipewire-pulse \
     pulseaudio-utils \
     wine \
     wine32 \
