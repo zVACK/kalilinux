@@ -7,8 +7,8 @@ service dbus start
 mkdir -p /tmp/.X11-unix
 chmod 1777 /tmp/.X11-unix
 
-# Start PulseAudio in system mode safely
-pulseaudio --start --system --disallow-exit --disable-shm --exit-idle-time=-1
+# Start PipeWire PulseAudio service in background
+pipewire-pulse &
 
 # Start xRDP service
 service xrdp start
