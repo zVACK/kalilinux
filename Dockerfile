@@ -1,4 +1,4 @@
-FROM debian:trixie
+FROM debian:bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -15,9 +15,8 @@ RUN apt update && apt install -y \
     wget \
     nano \
     net-tools \
-    polkitd \
     pkexec \
-    pipewire-pulse \
+    pulseaudio \
     pulseaudio-utils \
     wine \
     wine32 \
@@ -32,7 +31,7 @@ RUN useradd -m -s /bin/bash Ameer && \
 # دروستکردنی فۆڵدەری ڕێکخستنی GTK بۆ یوزەری Ameer
 RUN mkdir -p /home/Ameer/.config/gtk-3.0 /home/Ameer/.config/xfce4/xfconf/xfce-perchannel-xml
 
-# چالاککردنی Dark Mode بۆ XFCE بە شێوازی ڕەسەن
+# چالاککردنی Dark Mode ڕەسەن لە Debian 12
 RUN echo '<?xml version="1.0" encoding="UTF-8"?>\n\
 <channel name="xsettings" version="1.0">\n\
   <property name="Net" type="empty">\n\
@@ -40,7 +39,7 @@ RUN echo '<?xml version="1.0" encoding="UTF-8"?>\n\
   </property>\n\
 </channel>' > /home/Ameer/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
 
-# دانانی شێوازی شووشەیی (Glass Effect) لە ڕێگەی CSSی ڕەسەنەوە
+# دانانی شێوازی شووشەیی (Glass Effect)
 RUN echo 'panel.gtk-gradient, .xfce4-panel {\n\
     background-color: rgba(15, 15, 15, 0.45) !important;\n\
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);\n\
@@ -56,12 +55,12 @@ RUN chown -R Ameer:Ameer /home/Ameer/.config
 
 RUN sed -i 's/^allowed_users=.*/allowed_users=anybody/' /etc/X11/Xwrapper.config || echo "allowed_users=anybody" >> /etc/X11/Xwrapper.config
 
-# ڕێکخستنی xRDP ڕێک وەک سەرەتا بۆ ئەوەی بە هیچ شێوەیەک هەڵەی Session نەدات
+# ڕێکخستنی xRDP بۆ بەکارهێنانی startxfce4 بەبێ کێشەی Session Error
 RUN sed -i 's/crypt_level=high/crypt_level=low/' /etc/xrdp/xrdp.ini && \
     sed -i 's/security_layer=negotiate/security_layer=rdp/' /etc/xrdp/xrdp.ini && \
     echo "exec startxfce4" > /etc/xrdp/startwm.sh && chmod +x /etc/xrdp/startwm.sh
 
-RUN echo "startxfce4" > /home/Ameer/.xsession && chown Ameer:Ameer /home/Ameer/.xsession && chmod 755 /home/Ameer/.xsession
+RUN echo "exec startxfce4" > /home/Ameer/.xsession && chown Ameer:Ameer /home/Ameer/.xsession && chmod 755 /home/Ameer/.xsession
 
 # Generate machine-id for dbus
 RUN mkdir -p /var/run/dbus && dbus-uuidgen > /var/lib/dbus/machine-id
