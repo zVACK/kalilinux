@@ -2,11 +2,11 @@ FROM kalilinux/kali-rolling:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# چالاککردنی پشتگیری 32-bit بۆ بەرنامەکانی Wine (.exe)
+# چالاککردنی پشتگیری 32-bit بۆ بەرنامەکانی Wine
 RUN dpkg --add-architecture i386
 
-# بەرزکردنەوەی سیستەمەکە و دابەزاندنی XFCE و ڕووکاری فەرمیی Kali Linux
-RUN apt update && apt full-upgrade -y && apt install -y \
+# دابەزاندنی XFCE، XRDP، Wine و ئامرازەکانی Kali (بەبێ full-upgrade بۆ ڕێگری لە کێشە)
+RUN apt update && apt install -y --no-install-recommends \
     xrdp \
     xfce4 \
     xfce4-goodies \
@@ -31,18 +31,17 @@ RUN apt update && apt full-upgrade -y && apt install -y \
     kali-defaults && \
     apt clean && rm -rf /var/lib/apt/lists/*
 
-# دروستکردنی یوزەری Ameer لەگەڵ وشەی نهێنی 1234 و مۆڵەتی sudo
+# دروستکردنی یوزەری Ameer لەگەڵ وشەی نهێنی 1234 و بەخشینی مۆڵەتی sudo
 RUN useradd -m -s /bin/bash Ameer && \
     echo "Ameer:1234" | chpasswd && \
     usermod -aG sudo Ameer
 
-# دیاریکردنی ڕووکاری فەرمیی Kali (Dark Theme) بۆ یوزەری Ameer
-RUN mkdir -p /home/Ameer/.config/xfce4/xfconf/xfce-perchannel-xml/
-RUN echo '<?xml version="1.0" encoding="UTF-8"?><channel name="xsettings" version="1.0"><property name="Net" type="empty"><property name="ThemeName" type="string" value="Kali-Dark"/><property name="IconThemeName" type="string" value="Flat-Remix-Blue-Dark"/></property></channel>' > /home/Ameer/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+# چەسپاندنی ڕووکاری ئەسڵیی کالی (Kali-Dark)
+RUN mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/ && \
+    echo '<?xml version="1.0" encoding="UTF-8"?><channel name="xsettings" version="1.0"><property name="Net" type="empty"><property name="ThemeName" type="string" value="Kali-Dark"/><property name="IconThemeName" type="string" value="Flat-Remix-Blue-Dark"/></property></channel>' > /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
 
-# دانانی سێشنی XFCE و ڕێکخستنی خاوەندارێتی بوخچەی home
-RUN echo "startxfce4" > /home/Ameer/.xsession && chmod 700 /home/Ameer/.xsession
-RUN chown -R Ameer:Ameer /home/Ameer
+# دیاریکردنی سێشنی XFCE
+RUN echo "startxfce4" > /etc/skel/.xsession && chmod 700 /etc/skel/.xsession
 
 RUN sed -i 's/^allowed_users=.*/allowed_users=anybody/' /etc/X11/Xwrapper.config || echo "allowed_users=anybody" >> /etc/X11/Xwrapper.config
 
