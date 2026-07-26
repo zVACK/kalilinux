@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# پاککردنەوە و ئامادەکردنی X11
+# پاککردنەوەی تەواوی لاک فایلەکانی X11 تاوەکو هیچ کێشەیەکی Display 10 ڕوونەدات
+rm -rf /tmp/.X* /tmp/.X11-unix
 mkdir -p /tmp/.X11-unix
 chmod 1777 /tmp/.X11-unix
-rm -rf /tmp/.X*-lock /tmp/.X11-unix/X*
 
-# دەستپێکردنی ڕاژەکان
+# دەستپێکردنی ڕاژەکان بە پێویستی
 service dbus start
 service xrdp start
 service xrdp-sesman start
 
-# هێشتنەوەی کانتێنەرەکە بە بەردەوامی
+# هێشتنەوەی کانتێنەرەکە
 touch /var/log/xrdp-sesman.log /var/log/xrdp.log
 tail -f /var/log/xrdp*.log
